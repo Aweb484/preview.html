@@ -758,11 +758,11 @@
       <div class="login-card">
         <div class="login-input-wrap">
           <span class="login-input-icon">👤</span>
-          <input class="login-input" id="login-name" placeholder="请输入账号" value="">
+          <input class="login-input" id="login-name" placeholder="请输入账号" value="" inputmode="numeric">
         </div>
-        <div class="login-input-wrap">
+        <div class="login-input-wrap" id="login-pwd-wrap">
           <span class="login-input-icon">🔒</span>
-          <input class="login-input" id="login-pwd" type="password" placeholder="请输入密码" value="">
+          <input class="login-input" id="login-pwd" type="password" placeholder="请输入密码（无密码可直接登录）" value="">
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--gray);" onclick="toggleRemember()">
@@ -994,7 +994,7 @@
       <div class="menu-list">
         <div class="menu-item">
           <div class="menu-icon">ℹ️</div>
-          <div class="menu-text"><div class="menu-title">关于</div><div class="menu-subtitle">计件积分管理 v1.0.0</div></div>
+          <div class="menu-text"><div class="menu-title">关于</div><div class="menu-subtitle">计件积分管理 v1.3.0</div></div>
           <span class="menu-arrow">›</span>
         </div>
       </div>
@@ -1265,6 +1265,33 @@
 </div>
 
 <script>
+// ===== 版本管理 =====
+const APP_VERSION = '1.3.0';
+const VERSION_KEY = 'app_html_version';
+
+function checkVersionUpdate() {
+  const lastVersion = localStorage.getItem(VERSION_KEY);
+  if (lastVersion && lastVersion !== APP_VERSION) {
+    showUpdateNotice(lastVersion, APP_VERSION);
+  }
+  localStorage.setItem(VERSION_KEY, APP_VERSION);
+}
+
+function showUpdateNotice(oldVer, newVer) {
+  document.getElementById('modal-overlay').classList.add('show');
+  document.getElementById('modal-sheet').classList.add('show');
+  document.getElementById('modal-sheet').innerHTML = `
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:10px 20px 24px;">
+      <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+      <div class="modal-title" style="margin-bottom:8px;">系统已更新</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:6px;">版本 v${oldVer} → v${newVer}</p>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:20px;">系统已自动更新至最新版本</p>
+      <button onclick="closeModal()" style="width:100%;padding:12px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">知道了</button>
+    </div>
+  `;
+}
+
 // ===== DATA =====
 const STANDARDS = [
   {id:1,module:'计划修作业',category:'设备检修',content:'动车作业',unit:'每次',score:4},
@@ -1326,37 +1353,41 @@ const STANDARDS = [
 ];
 
 const DEFAULT_USERS = [
-  {id:1,name:'刘晓阳',role:'employee',pwd:'',account:'1001'},
-  {id:2,name:'周奥青',role:'employee',pwd:'',account:'1002'},
-  {id:3,name:'马鹏程',role:'employee',pwd:'',account:'1003'},
-  {id:4,name:'王志波',role:'employee',pwd:'',account:'1004'},
-  {id:5,name:'周江涛',role:'employee',pwd:'',account:'1005'},
-  {id:6,name:'吴立志',role:'employee',pwd:'',account:'1006'},
-  {id:7,name:'刘超',role:'employee',pwd:'',account:'1007'},
-  {id:8,name:'李坤',role:'employee',pwd:'',account:'1008'},
-  {id:9,name:'张文博',role:'employee',pwd:'',account:'1009'},
-  {id:10,name:'薛丰毅',role:'employee',pwd:'',account:'1010'},
-  {id:11,name:'黄志豪',role:'employee',pwd:'',account:'1011'},
-  {id:12,name:'赵智龙',role:'employee',pwd:'',account:'1012'},
-  {id:13,name:'田洪大',role:'employee',pwd:'',account:'1013'},
-  {id:14,name:'朱新明',role:'employee',pwd:'',account:'1014'},
-  {id:15,name:'王伟杰',role:'employee',pwd:'',account:'1015'},
-  {id:16,name:'张鑫',role:'employee',pwd:'',account:'1016'},
-  {id:17,name:'韩枫',role:'employee',pwd:'',account:'1017'},
-  {id:18,name:'王元坤',role:'employee',pwd:'',account:'1018'},
-  {id:19,name:'开发者',role:'superadmin',pwd:'06012510',account:'06012510'},
-  {id:20,name:'管理员',role:'admin',pwd:'06012524',account:'06012524'},
+  {id:1,name:'郝志强',role:'employee',pwd:'06004122',account:'06004122',firstLogin:true},
+  {id:2,name:'侯晓亮',role:'employee',pwd:'06003957',account:'06003957',firstLogin:true},
+  {id:3,name:'杜兵',role:'employee',pwd:'06002071',account:'06002071',firstLogin:true},
+  {id:4,name:'刘晓阳',role:'employee',pwd:'06003111',account:'06003111',firstLogin:true},
+  {id:5,name:'夏海强',role:'employee',pwd:'06003657',account:'06003657',firstLogin:true},
+  {id:6,name:'马鹏程',role:'employee',pwd:'06004614',account:'06004614',firstLogin:true},
+  {id:7,name:'周奥青',role:'employee',pwd:'06004638',account:'06004638',firstLogin:true},
+  {id:8,name:'王志波',role:'employee',pwd:'06005584',account:'06005584',firstLogin:true},
+  {id:9,name:'吴立志',role:'employee',pwd:'06006634',account:'06006634',firstLogin:true},
+  {id:10,name:'李坤',role:'employee',pwd:'06012223',account:'06012223',firstLogin:true},
+  {id:11,name:'周江涛',role:'employee',pwd:'06012500',account:'06012500',firstLogin:true},
+  {id:12,name:'刘超',role:'employee',pwd:'06012510',account:'06012510',firstLogin:true},
+  {id:13,name:'张文博',role:'employee',pwd:'06012512',account:'06012512',firstLogin:true},
+  {id:14,name:'黄志豪',role:'employee',pwd:'06012520',account:'06012520',firstLogin:true},
+  {id:15,name:'田洪大',role:'employee',pwd:'06012524',account:'06012524',firstLogin:true},
+  {id:16,name:'薛丰毅',role:'employee',pwd:'06013778',account:'06013778',firstLogin:true},
+  {id:17,name:'王伟杰',role:'employee',pwd:'06013791',account:'06013791',firstLogin:true},
+  {id:18,name:'赵智龙',role:'employee',pwd:'06013793',account:'06013793',firstLogin:true},
+  {id:19,name:'朱新明',role:'employee',pwd:'06014597',account:'06014597',firstLogin:true},
+  {id:20,name:'张鑫',role:'employee',pwd:'06014606',account:'06014606',firstLogin:true},
+  {id:21,name:'韩枫',role:'employee',pwd:'06016966',account:'06016966',firstLogin:true},
+  {id:22,name:'王元坤',role:'employee',pwd:'06016967',account:'06016967',firstLogin:true},
+  {id:99,name:'开发者',role:'superadmin',pwd:'1566652902',account:'1566652902'},
+  {id:100,name:'管理员',role:'admin',pwd:'16652015021',account:'16652015021'},
 ];
 
 // 从 localStorage 加载用户数据，如果没有则用默认数据
 function loadUsers() {
   const saved = localStorage.getItem('app_users');
   const version = localStorage.getItem('app_users_version');
-  if (saved && version === '2') {
+  if (saved && version === '3') {
     try { return JSON.parse(saved); } catch(e) {}
   }
   // 版本不匹配或无数据，用默认数据并保存
-  localStorage.setItem('app_users_version', '2');
+  localStorage.setItem('app_users_version', '3');
   localStorage.removeItem('app_users'); // 清除旧数据
   return JSON.parse(JSON.stringify(DEFAULT_USERS));
 }
@@ -1527,44 +1558,77 @@ function doLogin() {
   const account = document.getElementById('login-name').value.trim();
   const pwd = document.getElementById('login-pwd').value.trim();
   if (!account) { showToast('请输入账号'); return; }
-  if (!pwd) { showToast('请输入密码'); return; }
 
   showLoading('正在登录...');
 
   setTimeout(() => {
-    // 管理员账号密码验证（支持账号名或姓名登录）
-    const adminUser = USERS.find(u => (u.name === account || u.account === account) && u.pwd === pwd);
-    if (adminUser) {
-      currentUser = adminUser;
+    // 统一登录验证：支持账号或姓名登录
+    const user = USERS.find(u => (u.name === account || u.account === account));
+    if (user) {
+      // 有密码则验证密码，无密码则直接登录
+      if (user.pwd && user.pwd !== pwd) {
+        hideLoading();
+        showToast('❌ 密码错误');
+        return;
+      }
+      currentUser = user;
       if (rememberPwd) {
         localStorage.setItem('savedAccount', account);
         localStorage.setItem('savedPwd', pwd);
         localStorage.setItem('rememberPwd', 'true');
       }
       hideLoading();
-      showToast('✅ 登录成功，欢迎 ' + currentUser.name);
-      setTimeout(() => { navStack = ['home']; navDirection = 'forward'; showScreen('home'); renderHome(); }, 300);
-      return;
-    }
-
-    // 普通员工：输入姓名即可登录
-    const empUser = USERS.find(u => u.name === account && u.role === 'employee');
-    if (empUser) {
-      currentUser = empUser;
-      if (rememberPwd) {
-        localStorage.setItem('savedAccount', account);
-        localStorage.setItem('savedPwd', pwd);
-        localStorage.setItem('rememberPwd', 'true');
+      // 首次登录强制修改密码
+      if (user.firstLogin) {
+        showForceChangePwd();
+        return;
       }
-      hideLoading();
       showToast('✅ 登录成功，欢迎 ' + currentUser.name);
       setTimeout(() => { navStack = ['home']; navDirection = 'forward'; showScreen('home'); renderHome(); }, 300);
       return;
     }
 
     hideLoading();
-    showToast('❌ 账号或密码错误');
+    showToast('❌ 账号不存在');
   }, 600);
+}
+
+// 首次登录强制修改密码
+function showForceChangePwd() {
+  document.getElementById('modal-overlay').classList.add('show');
+  document.getElementById('modal-sheet').classList.add('show');
+  document.getElementById('modal-sheet').innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔒 首次登录，请修改密码</div>
+    <div style="padding:0 20px 20px;">
+      <p style="font-size:13px;color:var(--gray);margin-bottom:16px;">为了账号安全，请设置一个新密码后再进入系统。</p>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;color:var(--gray);display:block;margin-bottom:4px;">新密码</label>
+        <input id="force-new-pwd" type="password" placeholder="请输入新密码（至少4位）" style="width:100%;padding:10px 12px;border:1px solid var(--lightGray);border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;" />
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:12px;color:var(--gray);display:block;margin-bottom:4px;">确认新密码</label>
+        <input id="force-confirm-pwd" type="password" placeholder="请再次输入新密码" style="width:100%;padding:10px 12px;border:1px solid var(--lightGray);border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;" />
+      </div>
+      <button onclick="submitForceChangePwd()" style="width:100%;padding:12px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">确认修改并登录</button>
+    </div>
+  `;
+}
+
+function submitForceChangePwd() {
+  const newPwd = document.getElementById('force-new-pwd').value.trim();
+  const confirmPwd = document.getElementById('force-confirm-pwd').value.trim();
+  if (!newPwd || newPwd.length < 4) { showToast('⚠️ 密码至少4位'); return; }
+  if (newPwd !== confirmPwd) { showToast('❌ 两次密码不一致'); return; }
+  // 更新密码并标记非首次登录
+  currentUser.pwd = newPwd;
+  currentUser.firstLogin = false;
+  const u = USERS.find(x => x.id === currentUser.id);
+  if (u) { u.pwd = newPwd; u.firstLogin = false; }
+  saveUsers();
+  closeModal();
+  showToast('✅ 密码修改成功，欢迎 ' + currentUser.name);
+  setTimeout(() => { navStack = ['home']; navDirection = 'forward'; showScreen('home'); renderHome(); }, 300);
 }
 
 function doLogout() {
@@ -2315,7 +2379,7 @@ function showUserForm() {
     const dup = USERS.find(u => u.account === vals[1]);
     if (dup) { showToast('⚠️ 账号已存在'); return; }
     const newId = Math.max(...USERS.map(u => u.id)) + 1;
-    USERS.push({id: newId, name: vals[0], role: 'employee', pwd: vals[2], account: vals[1]});
+    USERS.push({id: newId, name: vals[0], role: 'employee', pwd: vals[2], account: vals[1], firstLogin: vals[2] ? false : true});
     saveUsers();
     showToast(`✅ 已添加用户：${vals[0]}（账号：${vals[1]}）`);
     renderUsers();
@@ -2862,6 +2926,7 @@ function addListAnimation(container) {
 initRecords();
 initSubmit();
 loadSavedLogin();
+checkVersionUpdate();
 
 // 延迟初始化交互效果
 setTimeout(() => {
