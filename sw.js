@@ -1,9 +1,10 @@
-const CACHE_NAME = 'score-app-v1.4.1';
+const CACHE_NAME = 'score-app-v1.5.0';
 const ASSETS = [
   './preview.html',
   './manifest.json',
   './icon-192x192.png',
-  './icon-512x512.png'
+  './icon-512x512.png',
+  './apple-touch-icon.png'
 ];
 
 // 安装：缓存核心文件
