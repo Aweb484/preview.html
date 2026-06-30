@@ -1305,6 +1305,7 @@ function showUpdateNotice(oldVer, newVer) {
 
 // ===== DATA =====
 const STANDARDS = [
+  // 计划修作业 - 设备检修 (22项)
   {id:1,module:'计划修作业',category:'设备检修',content:'动车作业',unit:'每次',score:4},
   {id:2,module:'计划修作业',category:'设备检修',content:'可视化自动接地系统检修作业',unit:'每次',score:3},
   {id:3,module:'计划修作业',category:'设备检修',content:'电动隔离开关检修作业',unit:'每次',score:3},
@@ -1312,49 +1313,58 @@ const STANDARDS = [
   {id:5,module:'计划修作业',category:'设备检修',content:'监控子站检修作业',unit:'每次',score:3},
   {id:6,module:'计划修作业',category:'设备检修',content:'区间过渡电阻测试',unit:'每次',score:3},
   {id:7,module:'计划修作业',category:'设备检修',content:'避雷器测试',unit:'每次',score:3},
-  {id:8,module:'计划修作业',category:'设备检修',content:'均流箱检修作业',unit:'每次',score:3},
-  {id:9,module:'计划修作业',category:'设备检修',content:'接触轨停电作业',unit:'每次',score:3},
-  {id:10,module:'计划修作业',category:'设备检修',content:'接触轨送电作业',unit:'每次',score:3},
-  {id:11,module:'计划修作业',category:'设备检修',content:'绝缘子清扫作业',unit:'每次',score:3},
-  {id:12,module:'计划修作业',category:'设备检修',content:'接触轨端部弯头检修',unit:'每次',score:3},
-  {id:13,module:'计划修作业',category:'设备检修',content:'膨胀接头检修',unit:'每次',score:3},
-  {id:14,module:'计划修作业',category:'设备检修',content:'中心锚结检修',unit:'每次',score:3},
-  {id:15,module:'计划修作业',category:'设备检修',content:'防护罩检修',unit:'每次',score:3},
-  {id:16,module:'计划修作业',category:'设备检修',content:'接触轨综合检修',unit:'每次',score:3},
-  {id:17,module:'计划修作业',category:'设备检修',content:'回流箱检修',unit:'每次',score:3},
-  {id:18,module:'计划修作业',category:'设备检修',content:'单向导通装置检修',unit:'每次',score:3},
-  {id:19,module:'计划修作业',category:'设备检修',content:'车场线检修',unit:'每次',score:3},
-  {id:20,module:'计划修作业',category:'设备检修',content:'上网隔离开关检修',unit:'每次',score:3},
-  {id:21,module:'计划修作业',category:'设备检修',content:'车场隔离开关检修',unit:'每次',score:3},
-  {id:22,module:'计划修作业',category:'设备检修',content:'回流柜检修',unit:'每次',score:3},
-  {id:23,module:'计划修作业',category:'人员分工',content:'施工负责人',unit:'每次',score:3},
-  {id:24,module:'计划修作业',category:'人员分工',content:'辅站责任人',unit:'每次',score:2},
+  {id:8,module:'计划修作业',category:'设备检修',content:'单向导通装置检修作业',unit:'每次',score:3},
+  {id:9,module:'计划修作业',category:'设备检修',content:'杂散电流装置检修作业',unit:'每次',score:3},
+  {id:10,module:'计划修作业',category:'设备检修',content:'接触轨综合检修',unit:'每次',score:4},
+  {id:11,module:'计划修作业',category:'设备检修',content:'端部弯头检修',unit:'每次',score:3},
+  {id:12,module:'计划修作业',category:'设备检修',content:'膨胀接头检修',unit:'每次',score:3},
+  {id:13,module:'计划修作业',category:'设备检修',content:'上网电缆检修作业',unit:'每次',score:3},
+  {id:14,module:'计划修作业',category:'设备检修',content:'电连接电缆检修作业',unit:'每次',score:3},
+  {id:15,module:'计划修作业',category:'设备检修',content:'接触轨步行巡视',unit:'每次',score:2},
+  {id:16,module:'计划修作业',category:'设备检修',content:'小黄蜂检测/动态检测接触轨设备参数',unit:'每次',score:3},
+  {id:17,module:'计划修作业',category:'设备检修',content:'EPO功能测试',unit:'每次',score:3},
+  {id:18,module:'计划修作业',category:'设备检修',content:'绝缘支架预防性试验',unit:'每次',score:3},
+  {id:19,module:'计划修作业',category:'设备检修',content:'隔离开关预防性试验',unit:'每次',score:3},
+  {id:20,module:'计划修作业',category:'设备检修',content:'可视化预防性试验',unit:'每次',score:3},
+  {id:21,module:'计划修作业',category:'设备检修',content:'避雷器检修及预防性试验',unit:'每次',score:3},
+  {id:22,module:'计划修作业',category:'设备检修',content:'其他作业及预防性试验',unit:'每次',score:3},
+  // 计划修作业 - 人员分工 (4项)
+  {id:23,module:'计划修作业',category:'人员分工',content:'施工负责人',unit:'每次',score:4},
+  {id:24,module:'计划修作业',category:'人员分工',content:'辅站施工责任人',unit:'每次',score:2},
   {id:25,module:'计划修作业',category:'人员分工',content:'材料员',unit:'每次',score:2},
-  {id:26,module:'计划修作业',category:'人员分工',content:'安全员',unit:'每次',score:2},
-  {id:27,module:'计划修作业',category:'特种作业',content:'高架作业',unit:'每次',score:3},
-  {id:28,module:'配合作业',category:'配合类型',content:'配合工建专业',unit:'每次',score:3},
-  {id:29,module:'配合作业',category:'配合类型',content:'配合车辆专业',unit:'每次',score:3},
-  {id:30,module:'配合作业',category:'配合类型',content:'配合信号专业',unit:'每次',score:3},
-  {id:31,module:'配合作业',category:'作业类型',content:'配合施工',unit:'每次',score:3},
-  {id:32,module:'配合作业',category:'作业类型',content:'配合调试',unit:'每次',score:3},
-  {id:33,module:'配合作业',category:'作业类型',content:'配合抢修',unit:'每次',score:5},
-  {id:34,module:'日常运作',category:'巡视保障',content:'驻点值班保障',unit:'每次',score:3},
-  {id:35,module:'日常运作',category:'巡视保障',content:'工班值班保障',unit:'每次',score:2},
-  {id:36,module:'日常运作',category:'巡视保障',content:'巡视检查',unit:'每次',score:2},
-  {id:37,module:'日常运作',category:'巡视保障',content:'设备巡视',unit:'每次',score:2},
-  {id:38,module:'日常运作',category:'巡视保障',content:'温度测量',unit:'每次',score:2},
-  {id:39,module:'日常运作',category:'巡视保障',content:'参与活动、物资搬运、卫生打扫等其他工作',unit:'每次',score:2},
-  {id:40,module:'日常运作',category:'巡视保障',content:'节假日值班保障',unit:'每次',score:5},
-  {id:41,module:'日常运作',category:'巡视保障',content:'应急值班保障',unit:'每次',score:5},
-  {id:42,module:'日常运作',category:'巡视保障',content:'专项巡视',unit:'每次',score:3},
-  {id:43,module:'故障处理',category:'人员作用',content:'故障处理负责人',unit:'每次',score:5},
-  {id:44,module:'故障处理',category:'人员作用',content:'故障处理主要参与人',unit:'每次',score:4},
-  {id:45,module:'故障处理',category:'人员作用',content:'故障处理配合人员',unit:'每次',score:3},
-  {id:46,module:'故障处理',category:'人员作用',content:'故障处理信息报送',unit:'每次',score:2},
+  {id:26,module:'计划修作业',category:'人员分工',content:'安全员',unit:'每次',score:1},
+  // 计划修作业 - 特种作业 (1项)
+  {id:27,module:'计划修作业',category:'特种作业',content:'动火、登高、有限空间作业',unit:'每次',score:5},
+  // 配合作业 - 配合类型 (4项)
+  {id:28,module:'配合作业',category:'配合类型',content:'监管外单位/部门一类施工',unit:'每次',score:5},
+  {id:29,module:'配合作业',category:'配合类型',content:'监管外单位/部门二类\\三类施工',unit:'每次',score:3},
+  {id:30,module:'配合作业',category:'配合类型',content:'完成其他部门配合作业，担任配合人',unit:'每次',score:2},
+  {id:31,module:'配合作业',category:'配合类型',content:'更换类作业',unit:'每次',score:2},
+  // 配合作业 - 作业类型 (2项)
+  {id:32,module:'配合作业',category:'作业类型',content:'动火作业',unit:'每次',score:5},
+  {id:33,module:'配合作业',category:'作业类型',content:'有限空间作业',unit:'每次',score:5},
+  // 日常运作 - 巡视保障 (9项)
+  {id:34,module:'日常运作',category:'巡视保障',content:'工作票办理',unit:'每次',score:1},
+  {id:35,module:'日常运作',category:'巡视保障',content:'完成节假日及恶劣天气登程轧道车巡视',unit:'每次',score:3},
+  {id:36,module:'日常运作',category:'巡视保障',content:'完成恶劣天气场段设备巡视',unit:'每次',score:3},
+  {id:37,module:'日常运作',category:'巡视保障',content:'完成隔离开关室巡视（含灭火器、应急物资及可视化）',unit:'每次',score:2},
+  {id:38,module:'日常运作',category:'巡视保障',content:'设备房/设备专项保障',unit:'每班',score:3},
+  {id:39,module:'日常运作',category:'巡视保障',content:'驻点值班保障',unit:'每班',score:3},
+  {id:40,module:'日常运作',category:'巡视保障',content:'工班值班保障',unit:'每班',score:2},
+  {id:41,module:'日常运作',category:'巡视保障',content:'C2/B3类作业',unit:'每次',score:1.5},
+  {id:42,module:'日常运作',category:'巡视保障',content:'参与活动、物资搬运、卫生打扫等其他工作，由工班长分配任务或抢单',unit:'每次',score:2},
+  // 故障处理 - 人员作用 (4项)
+  {id:43,module:'故障处理',category:'人员作用',content:'抢修负责人',unit:'每次',score:5},
+  {id:44,module:'故障处理',category:'人员作用',content:'辅站施工责任人',unit:'每次',score:4},
+  {id:45,module:'故障处理',category:'人员作用',content:'作业组成员',unit:'每次',score:3},
+  {id:46,module:'故障处理',category:'人员作用',content:'非工作期间参与抢修人员额外',unit:'每次',score:3},
+  // 故障处理 - 故障级别 (3项)
   {id:47,module:'故障处理',category:'故障级别',content:'A、B级',unit:'每次',score:5},
   {id:48,module:'故障处理',category:'故障级别',content:'C级',unit:'每次',score:3},
   {id:49,module:'故障处理',category:'故障级别',content:'其他',unit:'每次',score:1},
-  {id:50,module:'专项工作',category:'新线工作',content:'参建（一天3分，半天1.5分）',unit:'每次',score:3},
+  // 专项工作 - 新线工作 (1项)
+  {id:50,module:'专项工作',category:'新线工作',content:'参建（一天3分，半天1.5分，发现问题被采纳一条0.5分，一天上限8分）',unit:'每次',score:1.5,scoreRange:'1.5-8'},
+  // 模块工作 - 兼职模块 (6项)
   {id:51,module:'模块工作',category:'兼职模块',content:'综合模块',unit:'每月',score:8},
   {id:52,module:'模块工作',category:'兼职模块',content:'安全模块',unit:'每月',score:8},
   {id:53,module:'模块工作',category:'兼职模块',content:'生产模块',unit:'每月',score:8},
@@ -3198,7 +3208,9 @@ async function initCloud() {
   // 如果 Java 层已经注入了数据，跳过
   if (cloudDataSha === 'java-injected') return;
   showLoading('正在同步数据...');
-  const cloudData = await cloudLoad();
+  // 超时保护：本地打开时 fetch 可能永不返回，5秒后强制关闭loading
+  const timeout = new Promise(resolve => setTimeout(() => resolve(null), 5000));
+  const cloudData = await Promise.race([cloudLoad(), timeout]);
   if (cloudData) {
     if (cloudData.users && cloudData.users.length > 0) {
       USERS.length = 0;
