@@ -1012,7 +1012,7 @@
       <div class="menu-list">
         <div class="menu-item">
           <div class="menu-icon">ℹ️</div>
-          <div class="menu-text"><div class="menu-title">关于</div><div class="menu-subtitle">计件积分管理 v1.5.3</div></div>
+          <div class="menu-text"><div class="menu-title">关于</div><div class="menu-subtitle">计件积分管理 v1.5.4</div></div>
           <span class="menu-arrow">›</span>
         </div>
       </div>
@@ -1300,10 +1300,10 @@
 
 <script>
 // ===== 版本管理 =====
-const APP_VERSION = '1.5.3';
+const APP_VERSION = '1.5.4';
 const VERSION_KEY = 'app_html_version';
 // HTML_VERSION_CHECK 标记，供 APP Java 层校验 HTML 是否为最新版
-// HTML_VERSION_CHECK:1.5.3
+// HTML_VERSION_CHECK:1.5.4
 
 function checkVersionUpdate() {
   const lastVersion = localStorage.getItem(VERSION_KEY);
@@ -2576,8 +2576,48 @@ function viewPhoto(recordId) {
 }
 
 // ===== STATISTICS =====
+// 根据统计周期设置计算日期范围
+function getStatDateRange() {
+  const startDay = appSettings.statPeriodStartDay || 1;
+  if (startDay === 1) {
+    // 自然月
+    return {
+      start: new Date(statYear, statMonth - 1, 1),
+      end: new Date(statYear, statMonth, 0, 23, 59, 59)
+    };
+  } else {
+    // 自定义周期: 上月startDay 到 本月startDay-1
+    const prevMonth = statMonth - 1;
+    const prevMonthDays = new Date(statYear, prevMonth, 0).getDate();
+    const actualStartDay = Math.min(startDay, prevMonthDays);
+    const start = new Date(statYear, prevMonth - 1, actualStartDay);
+    const endMonthDays = new Date(statYear, statMonth, 0).getDate();
+    const actualEndDay = Math.min(startDay - 1, endMonthDays);
+    const end = new Date(statYear, statMonth - 1, actualEndDay, 23, 59, 59);
+    return { start, end };
+  }
+}
+
+function inStatPeriod(date) {
+  const range = getStatDateRange();
+  return date >= range.start && date <= range.end;
+}
+
+function getPeriodLabel() {
+  const startDay = appSettings.statPeriodStartDay || 1;
+  if (startDay === 1) return statYear + '年' + statMonth + '月';
+  const range = getStatDateRange();
+  const sm = range.start.getMonth() + 1, sd = range.start.getDate();
+  const em = range.end.getMonth() + 1, ed = range.end.getDate();
+  const sy = range.start.getFullYear(), ey = range.end.getFullYear();
+  let label = sm + '/' + sd + '-' + em + '/' + ed;
+  if (sy !== ey) label = sy + '年' + label;
+  if (sy !== ey) label += '(' + ey + '年)';
+  return label;
+}
+
 function renderStatistics() {
-  document.getElementById('period-text').textContent = statYear + '年' + statMonth + '月';
+  document.getElementById('period-text').textContent = getPeriodLabel();
   renderPersonalStats();
   // 普通员工隐藏团队排名 tab
   const canView = isAdminRole(currentUser.role);
@@ -2604,18 +2644,18 @@ function switchStatTab(idx, el) {
 }
 
 function renderPersonalStats() {
-  const my = records.filter(r => r.userId === currentUser.id && r.status === 'approved' && r.date.getFullYear()===statYear && r.date.getMonth()+1===statMonth);
-  const total = my.reduce((s,r) => s+r.score, 0);
-  const daysInMonth = new Date(statYear, statMonth, 0).getDate();
+  const my = records.filter(r => r.userId === currentUser.id && r.status === 'approved' && inStatPeriod(r.date));
+  const range = getStatDateRange();
+  const totalDays = Math.round((range.end - range.start) / 86400000) + 1;
   const daily = {};
   my.forEach(r => { const d = r.date.getDate(); daily[d] = (daily[d]||0) + r.score; });
   const maxDay = Math.max(...Object.values(daily), 1);
 
   document.getElementById('stat-personal').innerHTML = `
     <div class="stat-summary">
-      <div class="stat-item"><div class="stat-item-value">${total}</div><div class="stat-item-label">本月积分</div></div>
+      <div class="stat-item"><div class="stat-item-value">${my.reduce((s,r)=>s+r.score,0)}</div><div class="stat-item-label">本期积分</div></div>
       <div class="stat-item"><div class="stat-item-value">${my.length}</div><div class="stat-item-label">申报次数</div></div>
-      <div class="stat-item"><div class="stat-item-value">${(total/daysInMonth).toFixed(1)}</div><div class="stat-item-label">日均积分</div></div>
+      <div class="stat-item"><div class="stat-item-value">${(my.reduce((s,r)=>s+r.score,0)/totalDays).toFixed(1)}</div><div class="stat-item-label">日均积分</div></div>
     </div>
     <div class="chart-container">
       <div class="chart-title">📈 每日积分趋势</div>
@@ -2631,7 +2671,7 @@ function renderPersonalStats() {
 function renderTeamRanking() {
   const scores = {};
   const scopedRecs = getTeamScopedRecords();
-  scopedRecs.filter(r => r.status==='approved' && r.date.getFullYear()===statYear && r.date.getMonth()+1===statMonth).forEach(r => { scores[r.userName] = (scores[r.userName]||0) + r.score; });
+  scopedRecs.filter(r => r.status==='approved' && inStatPeriod(r.date)).forEach(r => { scores[r.userName] = (scores[r.userName]||0) + r.score; });
   const ranking = Object.entries(scores).sort((a,b) => b[1]-a[1]);
   const max = ranking.length > 0 ? ranking[0][1] : 1;
 
@@ -2648,7 +2688,7 @@ function renderTeamRanking() {
 function renderTaskStats() {
   const stats = {};
   const scopedRecs = getTeamScopedRecords();
-  scopedRecs.filter(r => r.status==='approved' && r.date.getFullYear()===statYear && r.date.getMonth()+1===statMonth).forEach(r => { stats[r.taskName] = (stats[r.taskName]||0) + r.count; });
+  scopedRecs.filter(r => r.status==='approved' && inStatPeriod(r.date)).forEach(r => { stats[r.taskName] = (stats[r.taskName]||0) + r.count; });
   const sorted = Object.entries(stats).sort((a,b) => b[1]-a[1]);
 
   document.getElementById('stat-tasks').innerHTML = `
@@ -2878,6 +2918,11 @@ function renderProfile() {
   // 组织架构管理仅开发者可见
   const orgMenu = document.getElementById('org-mgmt-menu');
   if (orgMenu) orgMenu.style.display = isSuperAdmin(currentUser.role) ? '' : 'none';
+  // 初始化统计周期标签
+  const startDay = appSettings.statPeriodStartDay || 1;
+  const periodLabel = startDay === 1 ? '自然月' : '每月' + startDay + '日~次月' + (startDay-1) + '日';
+  const periodEl = document.getElementById('set-stat-period');
+  if (periodEl) periodEl.textContent = periodLabel + ' ›';
 }
 
 // ===== USER MANAGEMENT =====
@@ -3523,6 +3568,7 @@ let appSettings = {
   notifyResult: true,
   notifyScore: false,
   statPeriod: '自然月',
+  statPeriodStartDay: 1,
   rankCount: '全部'
 };
 
@@ -3542,21 +3588,23 @@ function toggleSetting(el, name) {
 }
 
 function changeStatPeriod() {
-  const periods = ['自然月', '自然周', '自然季度', '自定义'];
-  const current = appSettings.statPeriod;
-  const options = periods.map(p => ({label: p, desc: p === current ? '✓ 当前' : ''}));
-  // 简单用弹窗选择
+  const currentDay = appSettings.statPeriodStartDay || 1;
   popupInput('统计周期', [
-    {label:'选择周期', value: current, placeholder: '自然月/自然周/自然季度/自定义'}
+    {label:'周期起始日（1=自然月，2~28=自定义）', value: String(currentDay), type:'number', placeholder:'输入1~28'}
   ], (vals) => {
-    if (['自然月','自然周','自然季度','自定义'].includes(vals[0])) {
-      appSettings.statPeriod = vals[0];
-      document.getElementById('set-stat-period').textContent = vals[0] + ' ›';
-      showToast(`✅ 统计周期已设为「${vals[0]}」`);
-      addLog(`修改统计周期为${vals[0]}`);
-    } else {
-      showToast('⚠️ 请输入有效周期');
+    let day = parseInt(vals[0]);
+    if (isNaN(day) || day < 1 || day > 28) {
+      showToast('⚠️ 请输入1~28之间的数字');
+      return;
     }
+    appSettings.statPeriodStartDay = day;
+    appSettings.statPeriod = day === 1 ? '自然月' : '每月' + day + '日起';
+    const label = day === 1 ? '自然月' : '每月' + day + '日~次月' + (day-1) + '日';
+    document.getElementById('set-stat-period').textContent = label + ' ›';
+    saveSettings();
+    showToast('✅ 统计周期已设为「' + label + '」');
+    addLog('修改统计周期为' + label);
+    if (typeof renderStatistics === 'function') renderStatistics();
   });
 }
 
